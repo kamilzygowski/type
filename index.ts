@@ -13,18 +13,18 @@ let color: string;
 let player = {
     x : 150,
     y : 150,
-    width : 155,
-    height : 155,
+    width : 65,
+    height : 65,
     speed : 8,
 };
-interface Bullet {
-    x: number,
-    y: number,
-    key: number?,
-}
+
 const pallete: string[] = ["#9c88ff", "#0097e6", "#353b48", "#1B1464", "#ED4C67", "#FFC312"];
 const playerImg = new Image;
 playerImg.src = "images/circle.png";
+const bulletImg = new Image;
+bulletImg.src = "images/bullet.png";
+ctx.canvas.width  = window.innerWidth;
+  ctx.canvas.height = window.innerHeight - 20;
 
 console.log("canvas width = " + canvas.width + " canvas height = " + canvas.height);
 
@@ -42,26 +42,11 @@ function randomBall() {
 
 }
 
-function playerBallArc() {
+function playerHitbox() {
     ctx.beginPath();
-    player = ctx.arc(0 + Math.floor(Math.random()* maxBallSize + minBallSize) ,0 + Math.floor(Math.random()* maxBallSize + minBallSize) ,  Math.floor(Math.random()* maxBallSize + minBallSize), 0, Math.PI * 2, true);
+    ctx.arc(player.x,player.y,  player.width/2, 0, Math.PI * 2, true);
     ctx.fillStyle = "pink";
     ctx.fill();
-}
-
-function spawnBullet() {
-    const shot: Bullet = {
-        x: player.x,
-        y: player.y,
-    };
-    ctx.fillStyle = "red";
-    const x = flyingBullet[i];
-    ctx.drawImage(playerImg, x, bullet.y, 30, 30); 
-    bulletBool = true;
-}
-
-function adder(number) {
-    number++;
 }
 
 function playerBallImg() {
@@ -76,6 +61,7 @@ setInterval(function() {
     //ctx.clearRect(0,0,canvas.width, canvas.height); // Background
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     playerBallImg(); // Spawn Player
+    //playerHitbox();
     //console.log(player.x, player.y);
 
     if (button["w"] && player.y >= 0) player.y-= player.speed;
@@ -84,13 +70,17 @@ setInterval(function() {
     if (button["d"] && player.x <= canvas.width - player.width) player.x+= player.speed;
 
     /* making shooting animation in rendering */
-    if (bulletBool == true) {
+    /*if (bulletBool == true) {
         spawnBullet();
         ctx.fillStyle = "red";
         flyingBullet[i] += 50;
-        
+    }*/
 
-
+    for (var e=0; e<flyingBullet.length; e++){
+        ctx.fillStyle = "red";
+        let bullets = flyingBullet[e];
+        ctx.drawImage(bulletImg, bullets.x - bullets.width/2, bullets.y - bullets.height/2, bullets.width, bullets.height); 
+        bullets.x += 35;
     }
 
 }, 1000/60);
@@ -99,13 +89,12 @@ window.addEventListener("keydown", function(e){
     button[e.key] = 1;
 
     if (e.code === 'Space') {
-        spawnBullet();
-        bulletBool;
-        bullet.x = player.x;
-        bullet.y = player.y;
-        i++;
-        flyingBullet.splice(i, 0, player.x);
-        console.log(flyingBullet[i]);
+        flyingBullet.push({
+            width: 16,
+            height: 10,
+            x: player.x + player.width/2,
+            y:player.y + player.height/2,
+        })
       }
 })
 
