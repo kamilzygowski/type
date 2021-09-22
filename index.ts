@@ -5,7 +5,7 @@ const ctx = canvas.getContext('2d');
 const button = [];
 let bullet = {};
 let flyingBullet = [];
-let i = -1;
+let i = 0;
 let bulletBool;
 let minBallSize: number = 80;
 let maxBallSize: number = 120;
@@ -17,16 +17,25 @@ let player = {
     height : 65,
     speed : 8,
 };
+let imgW, imgH;
 
 const pallete: string[] = ["#9c88ff", "#0097e6", "#353b48", "#1B1464", "#ED4C67", "#FFC312"];
 const playerImg = new Image;
 playerImg.src = "images/circle.png";
 const bulletImg = new Image;
 bulletImg.src = "images/bullet.png";
-ctx.canvas.width  = window.innerWidth;
+const backgroundImg = new Image;
+backgroundImg.src = "images/TileCosmos.png";
+ctx.canvas.width  = window.innerWidth*4;                            // HERE is *2 because background is 3840px width, not 1920px
   ctx.canvas.height = window.innerHeight - 20;
 
+
 console.log("canvas width = " + canvas.width + " canvas height = " + canvas.height);
+
+backgroundImg.onload = function(){
+    imgW = backgroundImg.width;
+    imgH = backgroundImg.height;
+}
 
 function ballColor() {
     color = pallete[Math.floor(Math.random() * pallete.length)];
@@ -58,8 +67,13 @@ playerBallImg();
 
 setInterval(function() {
     ctx.fillStyle = "#1B1464";
-    //ctx.clearRect(0,0,canvas.width, canvas.height); // Background
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    //ctx.clearRect(0,0,canvas.width, canvas.height);                                
+    //ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(backgroundImg, i , 0,3840, canvas.height);                       // Background        
+    ctx.drawImage(backgroundImg, i + 3840 , 0,3840, canvas.height);             // Second Background 
+    ctx.drawImage(backgroundImg, i + 3840*2 , 0,3840, canvas.height);           //Third Backgorund
+    ctx.drawImage(backgroundImg, i + 3840*3 , 0,3840, canvas.height);           //Fourth Background
+    i -= 2;                                                                         // Speed of scrolling the background
     playerBallImg(); // Spawn Player
     //playerHitbox();
     //console.log(player.x, player.y);
