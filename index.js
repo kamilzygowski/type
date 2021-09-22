@@ -3,24 +3,21 @@ exports.__esModule = true;
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var button = [];
-var bullet = {};
 var flyingBullet = [];
 var i = 0;
-var bulletBool;
-var minBallSize = 80;
-var maxBallSize = 120;
 var color;
 var player = {
     x: 150,
     y: 150,
-    width: 65,
-    height: 65,
-    speed: 8
+    width: 128,
+    height: 128,
+    speed: 8,
+    thisFrame: 0,
+    frameTime: 0
 };
-var imgW, imgH;
 var pallete = ["#9c88ff", "#0097e6", "#353b48", "#1B1464", "#ED4C67", "#FFC312"];
 var playerImg = new Image;
-playerImg.src = "images/circle.png";
+playerImg.src = "images/playerAnim128.png";
 var bulletImg = new Image;
 bulletImg.src = "images/bullet.png";
 var backgroundImg = new Image;
@@ -28,10 +25,6 @@ backgroundImg.src = "images/TileCosmos.png";
 ctx.canvas.width = window.innerWidth * 4; // HERE is *2 because background is 3840px width, not 1920px
 ctx.canvas.height = window.innerHeight - 20;
 console.log("canvas width = " + canvas.width + " canvas height = " + canvas.height);
-backgroundImg.onload = function () {
-    imgW = backgroundImg.width;
-    imgH = backgroundImg.height;
-};
 function ballColor() {
     color = pallete[Math.floor(Math.random() * pallete.length)];
     console.log(color);
@@ -48,10 +41,13 @@ function playerHitbox() {
     ctx.fillStyle = "pink";
     ctx.fill();
 }
-function playerBallImg() {
-    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+function drawPlayer() {
+    player.frameTime += 0.9;
+    player.frameTime = player.frameTime % 20;
+    player.thisFrame = Math.round(player.frameTime / 10);
+    ctx.drawImage(playerImg, player.width * player.thisFrame, 0, player.width, player.height, player.x, player.y, player.width, player.height);
 }
-playerBallImg();
+drawPlayer();
 //randomBall();
 setInterval(function () {
     ctx.fillStyle = "#1B1464";
@@ -62,7 +58,7 @@ setInterval(function () {
     ctx.drawImage(backgroundImg, i + 3840 * 2, 0, 3840, canvas.height); //Third Backgorund
     ctx.drawImage(backgroundImg, i + 3840 * 3, 0, 3840, canvas.height); //Fourth Background
     i -= 2; // Speed of scrolling the background
-    playerBallImg(); // Spawn Player
+    drawPlayer(); // Spawn Player
     //playerHitbox();
     //console.log(player.x, player.y);
     if (button["w"] && player.y >= 0)
@@ -73,12 +69,6 @@ setInterval(function () {
         player.y += player.speed;
     if (button["d"] && player.x <= canvas.width - player.width)
         player.x += player.speed;
-    /* making shooting animation in rendering */
-    /*if (bulletBool == true) {
-        spawnBullet();
-        ctx.fillStyle = "red";
-        flyingBullet[i] += 50;
-    }*/
     for (var e = 0; e < flyingBullet.length; e++) {
         ctx.fillStyle = "red";
         var bullets = flyingBullet[e];
@@ -92,10 +82,20 @@ window.addEventListener("keydown", function (e) {
         flyingBullet.push({
             width: 16,
             height: 10,
-            x: player.x + player.width / 2,
+            x: player.x + player.width / 2 + 50,
             y: player.y + player.height / 2
         });
+        console.log('xD');
     }
+});
+window.addEventListener("click", function (e) {
+    flyingBullet.push({
+        width: 16,
+        height: 10,
+        x: player.x + player.width / 2 + 50,
+        y: player.y + player.height / 2
+    });
+    console.log('xD');
 });
 window.addEventListener("keyup", function (e) {
     delete button[e.key];
