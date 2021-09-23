@@ -4,7 +4,7 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var button = [];
 var flyingBullet = [];
-var scrollingSpeed = 0;
+var scrollingSpeed = 0; // It is ALWAYS added to an object that is not moving with background
 var counter = 0;
 var color;
 var player = {
@@ -68,6 +68,8 @@ var backgroundImg = new Image;
 backgroundImg.src = "images/TileCosmos.png";
 var floatingEnemyImg = new Image;
 floatingEnemyImg.src = "images/enemy.png";
+var bombImg = new Image;
+bombImg.src = "images/bomb.png";
 ctx.canvas.width = window.innerWidth * 4; // HERE is *2 because background is 3840px width, not 1920px
 ctx.canvas.height = window.innerHeight - 20;
 console.log("canvas width = " + canvas.width + " canvas height = " + canvas.height);
@@ -120,6 +122,7 @@ setInterval(function () {
         ctx.drawImage(floatingEnemyImg, floatingEnemy[x].x + scrollingSpeed, floatingEnemy[x].y, floatingEnemy[x].width, floatingEnemy[x].height);
     }
     floatingEnemyLogic(); // Apply a logic to the enemy
+    ctx.drawImage(bombImg, 755 + scrollingSpeed, 466, 64, 64); // drawing random bomb
     if (button["w"] && player.y >= 0)
         player.y -= player.speed;
     if (button["a"] && player.x >= 0)
@@ -144,7 +147,6 @@ window.addEventListener("keydown", function (e) {
             x: player.x + player.width / 2 + 50,
             y: player.y + player.height / 2
         });
-        console.log('xD');
     }
 });
 window.addEventListener("click", function (e) {
@@ -154,7 +156,6 @@ window.addEventListener("click", function (e) {
         x: player.x + player.width / 2 + 50,
         y: player.y + player.height / 2
     });
-    console.log('xD');
 });
 window.addEventListener("keyup", function (e) {
     delete button[e.key];

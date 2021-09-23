@@ -4,7 +4,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const button = [];
 let flyingBullet = [];
-let scrollingSpeed = 0;
+let scrollingSpeed = 0; // It is ALWAYS added to an object that is not moving with background
 let counter = 0;
 let color: string;
 let player = {
@@ -69,6 +69,8 @@ const backgroundImg = new Image;
 backgroundImg.src = "images/TileCosmos.png";
 const floatingEnemyImg = new Image;
 floatingEnemyImg.src = "images/enemy.png";
+const bombImg = new Image;
+bombImg.src = "images/bomb.png";
 ctx.canvas.width  = window.innerWidth*4;                            // HERE is *2 because background is 3840px width, not 1920px
   ctx.canvas.height = window.innerHeight - 20;
 
@@ -137,6 +139,8 @@ setInterval(function() {
     }
     floatingEnemyLogic();       // Apply a logic to the enemy
 
+    ctx.drawImage(bombImg, 755 + scrollingSpeed, 466, 64, 64); // drawing random bomb
+
     if (button["w"] && player.y >= 0) player.y-= player.speed;
     if (button["a"] && player.x >= 0) player.x-= player.speed;
     if (button["s"] && player.y <= canvas.height - player.height) player.y+= player.speed;
@@ -163,7 +167,6 @@ window.addEventListener("keydown", function(e){     // Overwrite a char + add cr
             x: player.x + player.width/2 + 50,
             y:player.y + player.height/2,
         })
-        console.log('xD');
       }
 });
 
@@ -174,7 +177,6 @@ window.addEventListener("click", function(e){         // Creating bullet on clic
         x: player.x + player.width/2 + 50,
         y:player.y + player.height/2,
     })
-    console.log('xD');
   }
 );
 
