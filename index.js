@@ -22,65 +22,12 @@ var player = {
     speed: 8,
     thisFrame: 0,
     frameTime: 0,
-    radius: 128
+    radius: 128,
+    score: 0
 };
-var floatingEnemy = [{
-        x: 1222,
-        y: 555,
-        width: 128,
-        height: 128,
-        radius: 0 - 10,
-        hp: 15
-    },
-    {
-        x: 1666,
-        y: 366,
-        width: 128,
-        height: 128,
-        radius: 0 - 10,
-        hp: 15
-    },
-    {
-        x: 855,
-        y: 129,
-        width: 128,
-        height: 128,
-        radius: 0 - 10,
-        hp: 15
-    },
-    {
-        x: 2050,
-        y: 566,
-        width: 128,
-        height: 128,
-        radius: 0 - 10,
-        hp: 15
-    },
-    {
-        x: 2311,
-        y: 799,
-        width: 128,
-        height: 128,
-        radius: 0 - 10,
-        hp: 15
-    },
-    {
-        x: 522 + scrollingSpeed,
-        y: 611,
-        width: 128,
-        height: 128,
-        radius: 0 - 10,
-        hp: 15
-    },
-    {
-        x: 2811 + scrollingSpeed,
-        y: 419,
-        width: 128,
-        height: 128,
-        radius: 0 - 10,
-        hp: 15
-    },
-];
+var nrFloatingEnemies = 0; // Count every floating enemy
+var maxFloatingEnemies = 110; // How many floating enemies should spawn
+var floatingEnemy = [];
 var pallete = ["#9c88ff", "#0097e6", "#353b48", "#1B1464", "#ED4C67", "#FFC312"];
 /*  IMAGES  */
 var playerImg = new Image;
@@ -114,7 +61,7 @@ function floatingEnemyLogic() {
     for (var i = 0; i < enemiesNr; i++) {
         floatingEnemy[i].x += Math.floor(Math.random() * 14 + 1);
         floatingEnemy[i].y += Math.floor(Math.random() * 14 + 1);
-        floatingEnemy[i].x += scrollingSpeed / 1000; // Moving floating enemies a bit like a background is scrolling to not let them stay in the main screen forever
+        floatingEnemy[i].x += scrollingSpeed / 500; // Moving floating enemies a bit like a background is scrolling to not let them stay in the main screen forever
         floatingEnemy[i].x -= Math.floor(Math.random() * 14 + 1);
         floatingEnemy[i].y -= Math.floor(Math.random() * 14 + 1);
         if (floatingEnemy[i].hp <= 0) {
@@ -139,7 +86,6 @@ function enemyGotShot(enemy, damage) {
     actual = Math.round(time / 10);
     //ctx.drawImage(bulletExplosionImg, 100 * 3, 0, 100, 100, enemy.x,enemy.y , 100, 100); // EXPLOSION ANIM FOR LATER
     ctx.drawImage(testBoom, enemy.x, enemy.y, 100, 100);
-    console.log(enemy.x, actual);
 }
 function playerDies() {
     expframeTime += 6.9;
@@ -180,7 +126,6 @@ playButton.addEventListener('click', function () {
     menuDiv.classList.add('hide');
     gameState = true;
     Game();
-    console.log('gamestate = true');
 });
 /* START and body of the game itself */
 function Game() {
@@ -196,6 +141,19 @@ function Game() {
             ctx.drawImage(backgroundImg, scrollingSpeed + 3840 * 3, 0, 3840, canvas.height); //Fourth Background
             scrollingSpeed -= 2; // Speed of scrolling the background
             drawPlayer(); // Spawn Player
+            // Draw floating enemies on canvas
+            while (nrFloatingEnemies <= maxFloatingEnemies) {
+                nrFloatingEnemies++;
+                floatingEnemy.push({
+                    x: Math.floor(Math.random() * 9000 + 250),
+                    y: Math.floor(Math.random() * 1000 + 10),
+                    width: 128,
+                    height: 128,
+                    radius: 0 - 10,
+                    hp: 15,
+                    score: 100
+                });
+            }
             //playerHitbox();
             // Drawing floating blue enemy
             for (var x = 0; x < floatingEnemy.length; x++) {
@@ -292,4 +250,3 @@ mainMenuButton2.addEventListener('click', function () {
     menuDiv.classList.remove('hide');
     reloadPage();
 });
-console.log(canvas.x);
