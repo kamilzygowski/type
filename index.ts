@@ -28,49 +28,57 @@ let floatingEnemy = [{
     y: 555,
     width: 128,
     height: 128,
-    radius: 0 - 60,
+    radius: 0 - 5,
+
+    hp : 15 ,
 },
 {
     x: 1666,
     y: 366,
     width: 128,
     height: 128,
-    radius: 0 - 60,
+    radius: 0 - 5,
+    hp : 15 ,
 },
 {
     x: 855,
     y: 129,
     width: 128,
     height: 128,
-    radius: 0 - 60,
+    radius: 0 - 5,
+    hp : 15 ,
 },
 {
     x: 2050,
     y: 566,
     width: 128,
     height: 128,
-    radius: 0 - 60,
+    radius: 0 - 5,
+    hp : 15 ,
 },
 {
     x: 2311,
     y: 799,
     width: 128,
     height: 128,
-    radius: 0 - 60,
+    radius: 0 - 5,
+    hp : 15 ,
 },
 {
     x: 522 + scrollingSpeed,
     y: 611,
     width: 128,
     height: 128,
-    radius: 0 - 60,
+    radius: 0 - 5,
+    hp : 15 ,
 },
 {
     x: 2811 + scrollingSpeed,
     y: 419,
     width: 128,
     height: 128,
-    radius: 0 - 60,
+    radius: 0 - 5,
+    hp : 15 ,
 },
 ];
 
@@ -115,6 +123,11 @@ function floatingEnemyLogic() {
 
         floatingEnemy[i].x -= Math.floor(Math.random() * 14 + 1);
         floatingEnemy[i].y -= Math.floor(Math.random() * 14 + 1);
+
+        if (floatingEnemy[i].hp <= 0){
+            floatingEnemy[i].x = 0;
+            floatingEnemy[i].y = -150;
+        }
     }
 }
 
@@ -127,6 +140,10 @@ function drawPlayer() {
     player.frameTime = player.frameTime % 20;
     player.thisFrame = Math.round(player.frameTime / 10);
     ctx.drawImage(playerImg, player.width * player.thisFrame, 0, player.width, player.height, player.x, player.y, player.width, player.height);
+}
+
+function enemyGotShot (enemy, damage) {
+    enemy.hp -= damage;
 }
 
 function playerDies() {
@@ -144,14 +161,20 @@ function playerDies() {
     }, 1600); // Cancel set interval adter explosion animation
 }
 
-function collision(object1, object2) {
+function collision(object1, object2, colliderObject) {
     let dx = object1.x - object2.x;
     let dy = object1.y - object2.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance < object1.radius + object2.radius) {
-        playerIsDead = true; // When collied, player is dead
-        //clearInterval(gameInterval);
+        if (colliderObject == 'player'){
+            playerIsDead = true; // When collied, player is dead
+        }
+        if(colliderObject == 'playerBullet'){
+            object1.x = 0;
+            object1.y =-100;
+            enemyGotShot(object2,object1.damage);
+        }
     }
 }
 
@@ -184,7 +207,7 @@ function Game() {
             for (let x = 0; x < floatingEnemy.length; x++) {
                 ctx.drawImage(floatingEnemyImg, floatingEnemy[x].x, floatingEnemy[x].y, floatingEnemy[x].width, floatingEnemy[x].height);
                 
-                collision(player, floatingEnemy[x]);    // COLLISION player with floating enemy
+                collision(player, floatingEnemy[x], 'player');    // COLLISION player with floating enemy
             }
             floatingEnemyLogic();       // Apply a logic to the enemy
 
@@ -203,16 +226,25 @@ function Game() {
                 gameState = false;*/
             }
 
+            /* Player bullets maker */
             for (var e = 0; e < flyingBullet.length; e++) {
                 ctx.fillStyle = "red";
                 let bullets = flyingBullet[e];
                 ctx.drawImage(bulletImg, bullets.x - bullets.width / 2, bullets.y - bullets.height / 2, bullets.width, bullets.height);
                 bullets.x += 35;
+                for (let x = 0; x < floatingEnemy.length; x++) {
+                    collision(bullets, floatingEnemy[x], 'playerBullet');
+                    /*if (bulletIsDestroyed == true){
+                        delete flyingBullet[e];
+                    }*/
+                }
+                
             }
 
             if (playerIsDead == true) {
                 playerDies();
             }
+            
 
             /* COLLISIONS */
 
@@ -229,10 +261,12 @@ window.addEventListener("keydown", function (e) {
 
     if (e.code === 'Space') {
         flyingBullet.push({
-            width: 16,
-            height: 10,
+            width: 24,
+            height: 14,
             x: player.x + player.width / 2 + 50,
             y: player.y + player.height / 2,
+            radius: 100,
+            damage : 5,
         })
     }
     // If ENTER is pressed when the game is paused, unpause it
@@ -245,10 +279,12 @@ window.addEventListener("keydown", function (e) {
 // Creating bullet on clicking in window
 window.addEventListener("click", function (e) {
     flyingBullet.push({
-        width: 16,
-        height: 10,
+        width: 24,
+        height: 14,
         x: player.x + player.width / 2 + 50,
         y: player.y + player.height / 2,
+        radius: 100,
+        damage : 5,
     })
 }
 );
