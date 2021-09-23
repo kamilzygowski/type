@@ -3,8 +3,20 @@
     <head>
         <title> Type </title>
         <link rel="stylesheet" href="index.css">
+        <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
     </head>
     <body>
+        <div class="menu">
+            <h1 id="gameHeader"> Type Game </h1>
+            <button id="playBtn">Play</button>
+            <button id="optionsBtn">Options</button>
+            <button id="creditsBtn">Credits</button>
+        </div>
+        <div id="pauseScreen" class="hide">
+            <h1 class="pauseHeader"> Game is paused</h1>
+            <p class="mainMenuButton"> Main Menu </p>
+            <p class="pressEnter"> Press ENTER to unpause </p>
+        </div>
         <canvas id="canvas"></canvas>
         <script>var exports = {};</script> 
         <script src="index.js"></script>

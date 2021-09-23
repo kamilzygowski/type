@@ -14,9 +14,98 @@ body {
     
 }
 
+.menu {
+    width: 7680px;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background:url("images/Space_Stars8.png");
+}
+
 #canvas {
+    width: 7680px;
+    height: 100%; 
+}
+
+#pauseScreen {
+    background-color: #000;
+    position: absolute;
 
     width: 7680px;
     height: 100%;
-    
+    max-width: 100%;
+    max-height: 100%;
+    color:#fff;
+    font-family: 'Cookie', cursive;
+    text-align: center;
 }
+
+.pauseHeader{
+    font-size: 144px;
+    margin-bottom: 200px;
+
+}
+
+.mainMenuButton {
+    font-size: 76px;
+    color:#4a69bd;
+    margin-bottom: 200px;
+}
+
+.mainMenuButton:hover {
+    color:#78e08f;
+    cursor: pointer;
+}
+
+.pressEnter {
+    font-size: 124px;
+    animation: fadeInAndOut 1s infinite alternate;
+    -webkit-animation: fadeInAndOut 1s infinite alternate;
+    -moz-animation: fadeInAndOut 1s infinite alternate;
+    -o-animation: fadeInAndOut 1s infinite alternate;
+    -ms-animation: fadeInAndOut 1s infinite alternate;
+}
+
+#playBtn, #optionsBtn, #creditsBtn {
+    width:575px;
+    height:120px;
+    margin:55px auto;
+    font-size: 104px;
+    font-family: 'Cookie', cursive;
+    border-radius: 55px;
+    background-color: #6a89cc;
+    animation-duration: 3s;
+    animation-delay: 2s;
+    animation-fill-mode: backwards;
+}
+
+#playBtn:hover, #optionsBtn:hover, #creditsBtn:hover {
+    background-color:#78e08f;
+   
+}
+
+#gameHeader {
+    text-align: center;
+    font-family: 'Cookie', cursive;
+    font-size: 144px;
+    margin-block: 15px;
+    color:#fff;
+}
+
+.hide {
+    display: none;
+}
+
+
+@keyframes fadeInAndOut {
+    0% {
+      opacity:1;
+    }
+    100% {
+      opacity:0;
+    }
+  }

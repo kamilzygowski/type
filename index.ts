@@ -7,6 +7,8 @@ let flyingBullet = [];
 let scrollingSpeed = 0; // It is ALWAYS added to an object that is not moving with background
 let counter = 0;
 let color: string;
+let gameState: bool = false;
+let gameInterval;
 let player = {
     x : 75,
     y : 445,
@@ -61,6 +63,8 @@ let floatingEnemy =[{
 ];
 
 const pallete: string[] = ["#9c88ff", "#0097e6", "#353b48", "#1B1464", "#ED4C67", "#FFC312"];
+
+/*  IMAGES  */
 const playerImg = new Image;
 playerImg.src = "images/playerAnim128.png";
 const bulletImg = new Image;
@@ -71,6 +75,13 @@ const floatingEnemyImg = new Image;
 floatingEnemyImg.src = "images/enemy.png";
 const bombImg = new Image;
 bombImg.src = "images/bomb.png";
+
+/* SELECTORS */
+const playButton = document.querySelector('#playBtn');
+const menuDiv = document.querySelector('.menu');
+const pauseDiv = document.querySelector('#pauseScreen');
+const mainMenuButton = document.querySelector('.mainMenuButton');
+
 ctx.canvas.width  = window.innerWidth*4;                            // HERE is *2 because background is 3840px width, not 1920px
   ctx.canvas.height = window.innerHeight - 20;
 
@@ -118,11 +129,21 @@ function drawPlayer() {
     ctx.drawImage(playerImg, player.width * player.thisFrame, 0, player.width, player.height, player.x, player.y, player.width, player.height);
 }
 
-drawPlayer();
+/* Main Functions init BELOW */
+// Clicking button PLAY  in menu
+playButton.addEventListener('click', function(){        
+    menuDiv.classList.add('hide');
+    gameState = true;
+    Game();
+    console.log('gamestate = true');
+});
 
 //randomBall();
 
-setInterval(function() {
+function Game() {
+if (gameState == true){
+    clearInterval(gameInterval);
+    gameInterval = setInterval(function() {
     ctx.fillStyle = "#1B1464";
     //ctx.clearRect(0,0,canvas.width, canvas.height);                                
     //ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -133,18 +154,25 @@ setInterval(function() {
     scrollingSpeed -= 2;                                                                         // Speed of scrolling the background
     drawPlayer(); // Spawn Player
     //playerHitbox();
-    //console.log(player.x, player.y);
-    for (let x = 0; x < floatingEnemy.length; x++){    // Drawing floating blue enemy
+    
+    // Drawing floating blue enemy
+    for (let x = 0; x < floatingEnemy.length; x++){    
         ctx.drawImage(floatingEnemyImg, floatingEnemy[x].x + scrollingSpeed, floatingEnemy[x].y, floatingEnemy[x].width, floatingEnemy[x].height);  
     }
     floatingEnemyLogic();       // Apply a logic to the enemy
 
     ctx.drawImage(bombImg, 755 + scrollingSpeed, 466, 64, 64); // drawing random bomb
 
-    if (button["w"] && player.y >= 0) player.y-= player.speed;
-    if (button["a"] && player.x >= 0) player.x-= player.speed;
-    if (button["s"] && player.y <= canvas.height - player.height) player.y+= player.speed;
-    if (button["d"] && player.x <= canvas.width - player.width) player.x+= player.speed;
+    if ((button["w"] || button["W"]) && player.y >= 0) player.y-= player.speed;
+    if( (button["a"] || button["A"]) && player.x >= 0) player.x-= player.speed;
+    if ((button["s"] || button["S"]) && player.y <= canvas.height - player.height) player.y+= player.speed;
+    if ((button["d"] || button["D"]) && player.x <= canvas.width - player.width) player.x+= player.speed;
+    if(button["Escape"]){  // On ESCAPE click go back to menu
+    clearInterval(gameInterval);
+        pauseDiv.classList.remove('hide');
+    /*menuDiv.classList.remove('hide');
+    gameState = false;*/
+    }
 
     for (var e=0; e<flyingBullet.length; e++){
         ctx.fillStyle = "red";
@@ -154,10 +182,13 @@ setInterval(function() {
     }
 
 }, 1000/60);
+}
+}
 
 
 
-window.addEventListener("keydown", function(e){     // Overwrite a char + add creating bullet on Space press
+// Overwrite a char + add creating bullet on Space press
+window.addEventListener("keydown", function(e){     
     button[e.key] = 1;
 
     if (e.code === 'Space') {
@@ -168,9 +199,15 @@ window.addEventListener("keydown", function(e){     // Overwrite a char + add cr
             y:player.y + player.height/2,
         })
       }
+// If ENTER is pressed when the game is paused, unpause it
+    if (e.code == 'Enter'){ 
+        pauseDiv.classList.add('hide');
+        gameState = true;
+         Game();
+    }
 });
-
-window.addEventListener("click", function(e){         // Creating bullet on clicking in window
+// Creating bullet on clicking in window
+window.addEventListener("click", function(e){         
     flyingBullet.push({
         width: 16,
         height: 10,
@@ -182,6 +219,12 @@ window.addEventListener("click", function(e){         // Creating bullet on clic
 
 window.addEventListener("keyup", function(e){
     delete button[e.key];
+});
+// When paused, on press main menu display menu and turn the game from hte start
+mainMenuButton.addEventListener('click', function(){ 
+    clearInterval(gameInterval);
+    pauseDiv.classList.add('hide');
+    menuDiv.classList.remove('hide');
 });
 
 
