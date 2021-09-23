@@ -32,7 +32,7 @@ body {
 }
 
 #pauseScreen {
-    background-color: #000;
+    background-color: #5f27cd;
     position: absolute;
 
     width: 7680px;
@@ -44,20 +44,26 @@ body {
     text-align: center;
 }
 
-.pauseHeader{
+.pauseHeader, .restartHeader{
     font-size: 144px;
     margin-bottom: 200px;
 
 }
 
-.mainMenuButton {
-    font-size: 76px;
-    color:#4a69bd;
-    margin-bottom: 200px;
+.restartHeader {
+    color: red;
 }
 
-.mainMenuButton:hover {
-    color:#78e08f;
+.mainMenuButton, .restartButton, .mainMenuButton2 {
+    font-size: 108px;
+    color:#F8EFBA;
+    margin: 0 auto;
+    margin-bottom: 200px;
+    width:400px;
+}
+
+.mainMenuButton:hover,  .restartButton:hover, .mainMenuButton2:hover{
+    color:#55E6C1;
     cursor: pointer;
 }
 
@@ -98,6 +104,19 @@ body {
 
 .hide {
     display: none;
+}
+
+#restartScreen {
+    background-color: #000;
+    position: absolute;
+
+    width: 7680px;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    color:#fff;
+    font-family: 'Cookie', cursive;
+    text-align: center; 
 }
 
 
