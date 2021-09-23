@@ -4,17 +4,61 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const button = [];
 let flyingBullet = [];
-let i = 0;
+let scrollingSpeed = 0;
+let counter = 0;
 let color: string;
 let player = {
-    x : 150,
-    y : 150,
+    x : 75,
+    y : 445,
     width : 128,
     height : 128,
     speed : 8,
     thisFrame: 0,
     frameTime: 0,
 };
+let floatingEnemy =[{
+    x : 1222,
+    y : 555,
+    width : 128,
+    height : 128,
+},
+{
+    x : 1666,
+    y : 366,
+    width : 128,
+    height : 128,
+},
+{
+    x : 855,
+    y : 129,
+    width : 128,
+    height : 128,
+},
+{
+    x : 2050,
+    y : 566,
+    width : 128,
+    height : 128,
+},
+{
+    x : 2311,
+    y : 799,
+    width : 128,
+    height : 128,
+},
+{
+    x : 522,
+    y : 611,
+    width : 128,
+    height : 128,
+},
+{
+    x : 2811,
+    y : 419,
+    width : 128,
+    height : 128,
+},
+];
 
 const pallete: string[] = ["#9c88ff", "#0097e6", "#353b48", "#1B1464", "#ED4C67", "#FFC312"];
 const playerImg = new Image;
@@ -23,6 +67,8 @@ const bulletImg = new Image;
 bulletImg.src = "images/bullet.png";
 const backgroundImg = new Image;
 backgroundImg.src = "images/TileCosmos.png";
+const floatingEnemyImg = new Image;
+floatingEnemyImg.src = "images/enemy.png";
 ctx.canvas.width  = window.innerWidth*4;                            // HERE is *2 because background is 3840px width, not 1920px
   ctx.canvas.height = window.innerHeight - 20;
 
@@ -44,6 +90,18 @@ function randomBall() {
 
 }
 
+function floatingEnemyLogic() {
+    const enemiesNr = floatingEnemy.length;
+    for (let i = 0; i < enemiesNr; i++){
+    
+        floatingEnemy[i].x += Math.floor(Math.random() * 14 + 1);
+        floatingEnemy[i].y += Math.floor(Math.random() * 14 + 1);
+
+        floatingEnemy[i].x -= Math.floor(Math.random() * 14 + 1);
+        floatingEnemy[i].y -= Math.floor(Math.random() * 14 + 1);
+    }
+}
+
 function playerHitbox() {
     ctx.beginPath();
     ctx.arc(player.x,player.y,  player.width/2, 0, Math.PI * 2, true);
@@ -59,20 +117,25 @@ function drawPlayer() {
 }
 
 drawPlayer();
+
 //randomBall();
 
 setInterval(function() {
     ctx.fillStyle = "#1B1464";
     //ctx.clearRect(0,0,canvas.width, canvas.height);                                
     //ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(backgroundImg, i , 0,3840, canvas.height);                       // Background        
-    ctx.drawImage(backgroundImg, i + 3840 , 0,3840, canvas.height);             // Second Background 
-    ctx.drawImage(backgroundImg, i + 3840*2 , 0,3840, canvas.height);           //Third Backgorund
-    ctx.drawImage(backgroundImg, i + 3840*3 , 0,3840, canvas.height);           //Fourth Background
-    i -= 2;                                                                         // Speed of scrolling the background
+    ctx.drawImage(backgroundImg,scrollingSpeed, 0,3840, canvas.height);                       // Background        
+    ctx.drawImage(backgroundImg,scrollingSpeed+ 3840 , 0,3840, canvas.height);             // Second Background 
+    ctx.drawImage(backgroundImg,scrollingSpeed+ 3840*2 , 0,3840, canvas.height);           //Third Backgorund
+    ctx.drawImage(backgroundImg,scrollingSpeed+ 3840*3 , 0,3840, canvas.height);           //Fourth Background
+    scrollingSpeed -= 2;                                                                         // Speed of scrolling the background
     drawPlayer(); // Spawn Player
     //playerHitbox();
     //console.log(player.x, player.y);
+    for (let x = 0; x < floatingEnemy.length; x++){    // Drawing floating blue enemy
+        ctx.drawImage(floatingEnemyImg, floatingEnemy[x].x + scrollingSpeed, floatingEnemy[x].y, floatingEnemy[x].width, floatingEnemy[x].height);  
+    }
+    floatingEnemyLogic();       // Apply a logic to the enemy
 
     if (button["w"] && player.y >= 0) player.y-= player.speed;
     if (button["a"] && player.x >= 0) player.x-= player.speed;
@@ -87,6 +150,8 @@ setInterval(function() {
     }
 
 }, 1000/60);
+
+
 
 window.addEventListener("keydown", function(e){     // Overwrite a char + add creating bullet on Space press
     button[e.key] = 1;
