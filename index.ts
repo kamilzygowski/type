@@ -6,6 +6,7 @@ const button = [];
 let flyingBullet = [];
 let scrollingSpeed = -2; // It is ALWAYS added to an object that is not moving with background
 let counter = 0;
+let time, actual;
 let color: string;
 let gameState: bool = false;
 let expframeTime = 0;
@@ -28,57 +29,57 @@ let floatingEnemy = [{
     y: 555,
     width: 128,
     height: 128,
-    radius: 0 - 5,
+    radius: 0 - 10,
 
-    hp : 15 ,
+    hp: 15,
 },
 {
     x: 1666,
     y: 366,
     width: 128,
     height: 128,
-    radius: 0 - 5,
-    hp : 15 ,
+    radius: 0 - 10,
+    hp: 15,
 },
 {
     x: 855,
     y: 129,
     width: 128,
     height: 128,
-    radius: 0 - 5,
-    hp : 15 ,
+    radius: 0 - 10,
+    hp: 15,
 },
 {
     x: 2050,
     y: 566,
     width: 128,
     height: 128,
-    radius: 0 - 5,
-    hp : 15 ,
+    radius: 0 - 10,
+    hp: 15,
 },
 {
     x: 2311,
     y: 799,
     width: 128,
     height: 128,
-    radius: 0 - 5,
-    hp : 15 ,
+    radius: 0 - 10,
+    hp: 15,
 },
 {
     x: 522 + scrollingSpeed,
     y: 611,
     width: 128,
     height: 128,
-    radius: 0 - 5,
-    hp : 15 ,
+    radius: 0 - 10,
+    hp: 15,
 },
 {
     x: 2811 + scrollingSpeed,
     y: 419,
     width: 128,
     height: 128,
-    radius: 0 - 5,
-    hp : 15 ,
+    radius: 0 - 10,
+    hp: 15,
 },
 ];
 
@@ -97,6 +98,10 @@ const bombImg = new Image;
 bombImg.src = "images/bomb.png";
 const playerDeathImg = new Image;
 playerDeathImg.src = "images/explosion.png";
+const bulletExplosionImg = new Image;
+bulletExplosionImg.src = "images/shoot.png";
+const testBoom = new Image;
+testBoom.src = "images/testBoom.png";
 
 /* SELECTORS */
 const playButton = document.querySelector('#playBtn');
@@ -119,12 +124,12 @@ function floatingEnemyLogic() {
         floatingEnemy[i].x += Math.floor(Math.random() * 14 + 1);
         floatingEnemy[i].y += Math.floor(Math.random() * 14 + 1);
 
-        floatingEnemy[i].x += scrollingSpeed/1000; // Moving floating enemies a bit like a background is scrolling to not let them stay in the main screen forever
+        floatingEnemy[i].x += scrollingSpeed / 1000; // Moving floating enemies a bit like a background is scrolling to not let them stay in the main screen forever
 
         floatingEnemy[i].x -= Math.floor(Math.random() * 14 + 1);
         floatingEnemy[i].y -= Math.floor(Math.random() * 14 + 1);
 
-        if (floatingEnemy[i].hp <= 0){
+        if (floatingEnemy[i].hp <= 0) {
             floatingEnemy[i].x = 0;
             floatingEnemy[i].y = -150;
         }
@@ -142,8 +147,17 @@ function drawPlayer() {
     ctx.drawImage(playerImg, player.width * player.thisFrame, 0, player.width, player.height, player.x, player.y, player.width, player.height);
 }
 
-function enemyGotShot (enemy, damage) {
+function enemyGotShot(enemy, damage) {
     enemy.hp -= damage;
+
+    
+    time += 0.5;
+    time = time % 20;
+    actual = Math.round(time / 10);
+    //ctx.drawImage(bulletExplosionImg, 100 * 3, 0, 100, 100, enemy.x,enemy.y , 100, 100); // EXPLOSION ANIM FOR LATER
+    ctx.drawImage(testBoom, enemy.x, enemy.y, 100, 100);
+    console.log(enemy.x, actual);
+
 }
 
 function playerDies() {
@@ -167,13 +181,19 @@ function collision(object1, object2, colliderObject) {
     let distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance < object1.radius + object2.radius) {
-        if (colliderObject == 'player'){
+        if (colliderObject == 'player') {
             playerIsDead = true; // When collied, player is dead
         }
-        if(colliderObject == 'playerBullet'){
+        if (colliderObject == 'playerBullet') {
             object1.x = 0;
-            object1.y =-100;
-            enemyGotShot(object2,object1.damage);
+            object1.y = -100;
+            enemyGotShot(object2, object1.damage);
+
+        }
+        if (colliderObject == 'playerBullet' && object1.range >= 50) {
+            object1.x = 0;
+            object1.y = -100;
+
         }
     }
 }
@@ -195,7 +215,7 @@ function Game() {
             ctx.fillStyle = "#1B1464";
             //ctx.clearRect(0,0,canvas.width, canvas.height);                                
             //ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(backgroundImg, scrollingSpeed, 0, 3840, canvas.height);                       // Background        
+            window.onload = ctx.drawImage(backgroundImg, scrollingSpeed, 0, 3840, canvas.height);                       // Background        
             ctx.drawImage(backgroundImg, scrollingSpeed + 3840, 0, 3840, canvas.height);             // Second Background 
             ctx.drawImage(backgroundImg, scrollingSpeed + 3840 * 2, 0, 3840, canvas.height);           //Third Backgorund
             ctx.drawImage(backgroundImg, scrollingSpeed + 3840 * 3, 0, 3840, canvas.height);           //Fourth Background
@@ -206,7 +226,7 @@ function Game() {
             // Drawing floating blue enemy
             for (let x = 0; x < floatingEnemy.length; x++) {
                 ctx.drawImage(floatingEnemyImg, floatingEnemy[x].x, floatingEnemy[x].y, floatingEnemy[x].width, floatingEnemy[x].height);
-                
+
                 collision(player, floatingEnemy[x], 'player');    // COLLISION player with floating enemy
             }
             floatingEnemyLogic();       // Apply a logic to the enemy
@@ -231,20 +251,22 @@ function Game() {
                 ctx.fillStyle = "red";
                 let bullets = flyingBullet[e];
                 ctx.drawImage(bulletImg, bullets.x - bullets.width / 2, bullets.y - bullets.height / 2, bullets.width, bullets.height);
-                bullets.x += 35;
+                bullets.x += 25;
+                bullets.range++;
                 for (let x = 0; x < floatingEnemy.length; x++) {
                     collision(bullets, floatingEnemy[x], 'playerBullet');
-                    /*if (bulletIsDestroyed == true){
-                        delete flyingBullet[e];
-                    }*/
+                    if (bullets.range >= 20) { // Delete the bullet after reaching amount of range
+                        bullets.x = 0;
+                        bullets.y = -150;
+                    }
                 }
-                
+
             }
 
             if (playerIsDead == true) {
                 playerDies();
             }
-            
+
 
             /* COLLISIONS */
 
@@ -262,11 +284,12 @@ window.addEventListener("keydown", function (e) {
     if (e.code === 'Space') {
         flyingBullet.push({
             width: 24,
-            height: 14,
+            height: 24,
             x: player.x + player.width / 2 + 50,
             y: player.y + player.height / 2,
-            radius: 100,
-            damage : 5,
+            radius: 30,
+            damage: 5,
+            range: 0,
         })
     }
     // If ENTER is pressed when the game is paused, unpause it
@@ -280,11 +303,12 @@ window.addEventListener("keydown", function (e) {
 window.addEventListener("click", function (e) {
     flyingBullet.push({
         width: 24,
-        height: 14,
+        height: 24,
         x: player.x + player.width / 2 + 50,
         y: player.y + player.height / 2,
-        radius: 100,
-        damage : 5,
+        radius: 50,
+        damage: 5,
+        range: 0,
     })
 }
 );

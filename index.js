@@ -6,6 +6,7 @@ var button = [];
 var flyingBullet = [];
 var scrollingSpeed = -2; // It is ALWAYS added to an object that is not moving with background
 var counter = 0;
+var time, actual;
 var color;
 var gameState = false;
 var expframeTime = 0;
@@ -28,7 +29,7 @@ var floatingEnemy = [{
         y: 555,
         width: 128,
         height: 128,
-        radius: 0 - 5,
+        radius: 0 - 10,
         hp: 15
     },
     {
@@ -36,7 +37,7 @@ var floatingEnemy = [{
         y: 366,
         width: 128,
         height: 128,
-        radius: 0 - 5,
+        radius: 0 - 10,
         hp: 15
     },
     {
@@ -44,7 +45,7 @@ var floatingEnemy = [{
         y: 129,
         width: 128,
         height: 128,
-        radius: 0 - 5,
+        radius: 0 - 10,
         hp: 15
     },
     {
@@ -52,7 +53,7 @@ var floatingEnemy = [{
         y: 566,
         width: 128,
         height: 128,
-        radius: 0 - 5,
+        radius: 0 - 10,
         hp: 15
     },
     {
@@ -60,7 +61,7 @@ var floatingEnemy = [{
         y: 799,
         width: 128,
         height: 128,
-        radius: 0 - 5,
+        radius: 0 - 10,
         hp: 15
     },
     {
@@ -68,7 +69,7 @@ var floatingEnemy = [{
         y: 611,
         width: 128,
         height: 128,
-        radius: 0 - 5,
+        radius: 0 - 10,
         hp: 15
     },
     {
@@ -76,7 +77,7 @@ var floatingEnemy = [{
         y: 419,
         width: 128,
         height: 128,
-        radius: 0 - 5,
+        radius: 0 - 10,
         hp: 15
     },
 ];
@@ -94,6 +95,10 @@ var bombImg = new Image;
 bombImg.src = "images/bomb.png";
 var playerDeathImg = new Image;
 playerDeathImg.src = "images/explosion.png";
+var bulletExplosionImg = new Image;
+bulletExplosionImg.src = "images/shoot.png";
+var testBoom = new Image;
+testBoom.src = "images/testBoom.png";
 /* SELECTORS */
 var playButton = document.querySelector('#playBtn');
 var menuDiv = document.querySelector('.menu');
@@ -129,6 +134,12 @@ function drawPlayer() {
 }
 function enemyGotShot(enemy, damage) {
     enemy.hp -= damage;
+    time += 0.5;
+    time = time % 20;
+    actual = Math.round(time / 10);
+    //ctx.drawImage(bulletExplosionImg, 100 * 3, 0, 100, 100, enemy.x,enemy.y , 100, 100); // EXPLOSION ANIM FOR LATER
+    ctx.drawImage(testBoom, enemy.x, enemy.y, 100, 100);
+    console.log(enemy.x, actual);
 }
 function playerDies() {
     expframeTime += 6.9;
@@ -157,6 +168,10 @@ function collision(object1, object2, colliderObject) {
             object1.y = -100;
             enemyGotShot(object2, object1.damage);
         }
+        if (colliderObject == 'playerBullet' && object1.range >= 50) {
+            object1.x = 0;
+            object1.y = -100;
+        }
     }
 }
 /* Main Functions init BELOW */
@@ -175,7 +190,7 @@ function Game() {
             ctx.fillStyle = "#1B1464";
             //ctx.clearRect(0,0,canvas.width, canvas.height);                                
             //ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(backgroundImg, scrollingSpeed, 0, 3840, canvas.height); // Background        
+            window.onload = ctx.drawImage(backgroundImg, scrollingSpeed, 0, 3840, canvas.height); // Background        
             ctx.drawImage(backgroundImg, scrollingSpeed + 3840, 0, 3840, canvas.height); // Second Background 
             ctx.drawImage(backgroundImg, scrollingSpeed + 3840 * 2, 0, 3840, canvas.height); //Third Backgorund
             ctx.drawImage(backgroundImg, scrollingSpeed + 3840 * 3, 0, 3840, canvas.height); //Fourth Background
@@ -210,12 +225,14 @@ function Game() {
                 ctx.fillStyle = "red";
                 var bullets = flyingBullet[e];
                 ctx.drawImage(bulletImg, bullets.x - bullets.width / 2, bullets.y - bullets.height / 2, bullets.width, bullets.height);
-                bullets.x += 35;
+                bullets.x += 25;
+                bullets.range++;
                 for (var x = 0; x < floatingEnemy.length; x++) {
                     collision(bullets, floatingEnemy[x], 'playerBullet');
-                    /*if (bulletIsDestroyed == true){
-                        delete flyingBullet[e];
-                    }*/
+                    if (bullets.range >= 20) { // Delete the bullet after reaching amount of range
+                        bullets.x = 0;
+                        bullets.y = -150;
+                    }
                 }
             }
             if (playerIsDead == true) {
@@ -231,11 +248,12 @@ window.addEventListener("keydown", function (e) {
     if (e.code === 'Space') {
         flyingBullet.push({
             width: 24,
-            height: 14,
+            height: 24,
             x: player.x + player.width / 2 + 50,
             y: player.y + player.height / 2,
-            radius: 100,
-            damage: 5
+            radius: 30,
+            damage: 5,
+            range: 0
         });
     }
     // If ENTER is pressed when the game is paused, unpause it
@@ -249,11 +267,12 @@ window.addEventListener("keydown", function (e) {
 window.addEventListener("click", function (e) {
     flyingBullet.push({
         width: 24,
-        height: 14,
+        height: 24,
         x: player.x + player.width / 2 + 50,
         y: player.y + player.height / 2,
-        radius: 100,
-        damage: 5
+        radius: 50,
+        damage: 5,
+        range: 0
     });
 });
 window.addEventListener("keyup", function (e) {
