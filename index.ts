@@ -26,7 +26,7 @@ let player = {
     score: 0,
 };
 let nrFloatingEnemies = 0; // Count every floating enemy
-const maxFloatingEnemies = 110;// How many floating enemies should spawn
+const maxFloatingEnemies = 160;// How many floating enemies should spawn
 let floatingEnemy = [];
 
 const pallete: string[] = ["#9c88ff", "#0097e6", "#353b48", "#1B1464", "#ED4C67", "#FFC312"];
@@ -169,7 +169,7 @@ function Game() {
             while (nrFloatingEnemies<=maxFloatingEnemies){
                 nrFloatingEnemies++;
             floatingEnemy.push({
-                x: Math.floor(Math.random() * 9000 + 250),
+                x: Math.floor(Math.random() * 13000 + 250),
                 y:  Math.floor(Math.random() * 1000 + 10),
                 width: 128,
                 height: 128,
@@ -238,7 +238,7 @@ function Game() {
 window.addEventListener("keydown", function (e) {
     button[e.key] = 1;
 
-    if (e.code === 'Space') {
+    if (e.code === 'Space' || (e.code === 'Space' && (button["w"] || button["W"])) || (e.code === 'Space' && (button["a"] || button["A"])) || (e.code === 'Space' && (button["s"] || button["S"])) || (e.code === 'Space' && (button["d"] || button["D"]))) {
         flyingBullet.push({
             width: 24,
             height: 24,
