@@ -4,7 +4,7 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var button = [];
 var flyingBullet = [];
-var scrollingSpeed = 2; // It is ALWAYS added to an object that is not moving with background
+var scrollingSpeed = -2; // It is ALWAYS added to an object that is not moving with background
 var counter = 0;
 var color;
 var gameState = false;
@@ -24,49 +24,49 @@ var player = {
     radius: 128
 };
 var floatingEnemy = [{
-        x: 1222 - scrollingSpeed,
+        x: 1222,
         y: 555,
         width: 128,
         height: 128,
         radius: 0 - 60
     },
     {
-        x: 1666 - scrollingSpeed,
+        x: 1666,
         y: 366,
         width: 128,
         height: 128,
         radius: 0 - 60
     },
     {
-        x: 855 - scrollingSpeed,
+        x: 855,
         y: 129,
         width: 128,
         height: 128,
         radius: 0 - 60
     },
     {
-        x: 2050 - scrollingSpeed,
+        x: 2050,
         y: 566,
         width: 128,
         height: 128,
         radius: 0 - 60
     },
     {
-        x: 2311 - scrollingSpeed,
+        x: 2311,
         y: 799,
         width: 128,
         height: 128,
         radius: 0 - 60
     },
     {
-        x: 522 - scrollingSpeed,
+        x: 522 + scrollingSpeed,
         y: 611,
         width: 128,
         height: 128,
         radius: 0 - 60
     },
     {
-        x: 2811 - scrollingSpeed,
+        x: 2811 + scrollingSpeed,
         y: 419,
         width: 128,
         height: 128,
@@ -97,33 +97,18 @@ var restartDiv = document.querySelector('#restartScreen');
 ctx.canvas.width = window.innerWidth * 4; // HERE is *2 because background is 3840px width, not 1920px
 ctx.canvas.height = window.innerHeight - 20;
 console.log("canvas width = " + canvas.width + " canvas height = " + canvas.height);
-function ballColor() {
-    color = pallete[Math.floor(Math.random() * pallete.length)];
-    console.log(color);
-}
-function randomBall() {
-    ballColor();
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.fill();
-}
 function floatingEnemyLogic() {
     var enemiesNr = floatingEnemy.length;
     for (var i = 0; i < enemiesNr; i++) {
         floatingEnemy[i].x += Math.floor(Math.random() * 14 + 1);
         floatingEnemy[i].y += Math.floor(Math.random() * 14 + 1);
+        floatingEnemy[i].x += scrollingSpeed / 1000; // Moving floating enemies a bit like a background is scrolling to not let them stay in the main screen forever
         floatingEnemy[i].x -= Math.floor(Math.random() * 14 + 1);
         floatingEnemy[i].y -= Math.floor(Math.random() * 14 + 1);
     }
 }
 function reloadPage() {
     window.location.reload();
-}
-function playerHitbox() {
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.width / 2, 0, Math.PI * 2, true);
-    ctx.fillStyle = "pink";
-    ctx.fill();
 }
 function drawPlayer() {
     player.frameTime += 0.9;
