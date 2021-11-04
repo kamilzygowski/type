@@ -53,9 +53,16 @@ var pauseDiv = document.querySelector('#pauseScreen');
 var mainMenuButton = document.querySelector('.mainMenuButton');
 var mainMenuButton2 = document.querySelector('.mainMenuButton2');
 var restartDiv = document.querySelector('#restartScreen');
+var instructionsButton = document.querySelector('.instructionsButton');
+var instructionDiv = document.getElementById('instructions');
+var backButton = document.querySelector('.fas');
 ctx.canvas.width = window.innerWidth * 4; // HERE is *2 because background is 3840px width, not 1920px
 ctx.canvas.height = window.innerHeight - 20;
 console.log("canvas width = " + canvas.width + " canvas height = " + canvas.height);
+function showInstructions() {
+    menuDiv.classList.add('hide');
+    instructionDiv.style.display = "block";
+}
 function floatingEnemyLogic() {
     var enemiesNr = floatingEnemy.length;
     for (var i = 0; i < enemiesNr; i++) {
@@ -232,6 +239,13 @@ window.addEventListener("click", function (e) {
         damage: 5,
         range: 0
     });
+});
+backButton.addEventListener('click', function () {
+    menuDiv.classList.remove('hide');
+    instructionDiv.style.display = "none";
+});
+instructionsButton.addEventListener('click', function () {
+    showInstructions();
 });
 window.addEventListener("keyup", function (e) {
     delete button[e.key];
